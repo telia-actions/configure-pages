@@ -1,5 +1,7 @@
 const axios = require('axios')
 const core = require('@actions/core')
+const { createProxyAgent } = require('./create-proxy-agent')
+const proxyAgent = createProxyAgent()
 
 function getApiBaseUrl() {
   return process.env.GITHUB_API_URL || 'https://api.github.com'
@@ -17,7 +19,9 @@ async function enablePagesSite({ repositoryNwo, githubToken }) {
           Accept: 'application/vnd.github.v3+json',
           Authorization: `Bearer ${githubToken}`,
           'Content-type': 'application/json'
-        }
+        },
+        proxy: false,
+        httpsAgent: proxyAgent
       }
     )
 
@@ -40,7 +44,9 @@ async function getPagesSite({ repositoryNwo, githubToken }) {
       headers: {
         Accept: 'application/vnd.github.v3+json',
         Authorization: `Bearer ${githubToken}`
-      }
+      },
+      proxy: false,
+      httpsAgent: proxyAgent
     })
 
     const pageObject = response.data
